@@ -63,7 +63,7 @@ namespace Glory
         moduleSettingsRootPath.append("Modules/Config");
         m_Engine->RegisterTypes();
         m_Engine->LoadLegacyModuleSettings(moduleSettingsRootPath);
-        m_Engine->LoadModuleSettings();
+        m_Engine->LoadModuleSettings(moduleSettingsRootPath);
         m_Engine->SetMainWindowInfo(std::move(windowCreateInfo));
 
         m_Runtime.reset(new GloryRuntime(m_Engine.get()));

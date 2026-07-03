@@ -1,5 +1,6 @@
 #include "Module.h"
 #include "IEngine.h"
+#include "SettingsContainer.h"
 
 namespace Glory
 {
@@ -51,6 +52,16 @@ namespace Glory
         return m_pEngine->EngineVersion();
     }
 
+    SettingsBase* Module::GetSettings()
+    {
+        return m_pSettings;
+    }
+
+    const SettingsBase* Module::GetSettings() const
+    {
+        return m_pSettings;
+    }
+
     ModuleSettings& Module::Settings()
     {
         return m_Settings;
@@ -67,5 +78,10 @@ namespace Glory
             m_Settings = YAML::Node(YAML::NodeType::Map);
         else m_Settings = YAML::LoadFile(settingsFile.string());
         LoadSettings(m_Settings);
+    }
+
+    void Module::SetSettings(SettingsBase* pSettings)
+    {
+        m_pSettings = pSettings;
     }
 }

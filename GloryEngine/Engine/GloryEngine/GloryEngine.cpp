@@ -1,6 +1,5 @@
 #include "GloryEngine.h"
 #include "Console.h"
-#include "Resources.h"
 #include "LayerRef.h"
 #include "SceneObjectRef.h"
 #include "ShapeProperty.h"
@@ -33,6 +32,7 @@
 #include "RenderData.h"
 #include "GraphicsDevice.h"
 #include "Renderer.h"
+#include "BinarySerialization.h"
 
 #include "Resources.h"
 #include "ResourceLoader.h"
@@ -42,6 +42,7 @@
 
 #include "GloryVersion.h"
 
+#include <SettingsContainer.h>
 #include <BinaryStream.h>
 #include <JobManager.h>
 #include <ThreadManager.h>
@@ -228,6 +229,8 @@ namespace Glory
 		m_Resources.reset(new Resources(m_AssetDatabase.get(), m_ResourceTypes.get(), m_Debug, m_ThreadManager.get()));
 		if (m_pResourceLoader) m_pResourceLoader->SetResources(m_Resources.get());
 
+		Reflect::SetReflectInstance(m_Reflection.get());
+
 		/* Copy main modules */
 		m_pMainModules.resize(createInfo.MainModuleCount);
 		m_pAllModules.resize(createInfo.MainModuleCount);
@@ -270,13 +273,11 @@ namespace Glory
 		WindowModule* pWindows = IEngine::GetMainModule<WindowModule>();
 		m_Debug->SetWindowModule(pWindows);
 
-		RegisterBasicTypes();
 		m_pSceneManager->Initialize();
 
 		for (size_t i = 0; i < m_pAllModules.size(); i++)
 		{
 			if (m_pAllModules[i]->m_IsInitialized) continue;
-			m_pAllModules[i]->m_pEngine = this;
 			m_pAllModules[i]->PreInitialize();
 		}
 
@@ -311,6 +312,8 @@ namespace Glory
 		for (size_t i = 0; i < m_pAllModules.size(); i++)
 		{
 			m_pAllModules[i]->PostInitialize();
+			const auto settings = m_pAllModules[i]->GetSettings();
+			if (settings) settings->NotifyFullChange();
 		}
 
 		/* Initialize renderers */
@@ -674,7 +677,6 @@ namespace Glory
 
 	void GloryEngine::RegisterBasicTypes()
 	{
-		Reflect::SetReflectInstance(m_Reflection.get());
 		Reflect::RegisterTemplatedType("std::vector,vector", (size_t)CustomTypeHash::Array, 0);
 
 		m_ResourceTypes->RegisterType<int>();
@@ -747,6 +749,17 @@ namespace Glory
 		//Reflect::RegisterBasicType<TextureData>("TextureData");
 		//Reflect::RegisterBasicType<FontData>("FontData");
 		Reflect::RegisterTemplatedType("ResourceReference,Glory::ResourceReference,class Glory::ResourceReference", ST_Asset, sizeof(UUID));
+	}
+
+	void GloryEngine::RegisterTypes()
+	{
+		RegisterBasicTypes();
+
+		for (size_t i = 0; i < m_pAllModules.size(); i++)
+		{
+			m_pAllModules[i]->m_pEngine = this;
+			m_pAllModules[i]->RegisterTypes();
+		}
 	}
 
 	void GloryEngine::Update()
@@ -843,11 +856,12 @@ namespace Glory
 		return m_pAllModules[index];
 	}
 
-	void GloryEngine::LoadModuleSettings(const std::filesystem::path& overrideRootPath)
+	void GloryEngine::LoadLegacyModuleSettings(const std::filesystem::path& overrideRootPath)
 	{
 		for (size_t i = 0; i < m_pAllModules.size(); i++)
 		{
 			Module* pModule = m_pAllModules[i];
+			pModule->m_pEngine = this;
 			const ModuleMetaData& moduleMetaData = pModule->GetMetaData();
 
 			const std::filesystem::path modulePath = moduleMetaData.Path();
@@ -866,5 +880,32 @@ namespace Glory
 			settingsFilePath.append(moduleMetaData.Name() + ".yaml");
 			pModule->LoadSettings(settingsFilePath);
 		}
+	}
+
+	void GloryEngine::LoadModuleSettings(const std::filesystem::path& settingsPath)
+	{
+		m_Resources->SetAllowReferenceCounting(false);
+		for (size_t i = 0; i < m_pAllModules.size(); i++)
+		{
+			Module* pModule = m_pAllModules[i];
+			pModule->m_pEngine = this;
+			const ModuleMetaData& moduleMetaData = pModule->GetMetaData();
+
+			const std::filesystem::path modulePath = moduleMetaData.Path();
+			/* Ignore built-in modules */
+			if (modulePath.empty()) continue;
+			std::filesystem::path settingsFilePath = settingsPath;
+			settingsFilePath.append(moduleMetaData.Name()).replace_extension(".gmodule");
+			pModule->InitializeSettings();
+			SettingsBase* pSettings = pModule->GetSettings();
+
+			if (!pSettings || !std::filesystem::exists(settingsFilePath)) continue;
+			auto data = **pSettings;
+			auto type = pSettings->GetType();
+
+			Utils::BinaryFileStream fileStream{ settingsFilePath, true, false };
+			Utils::DeserializeData(fileStream, type, data);
+		}
+		m_Resources->SetAllowReferenceCounting(true);
 	}
 }

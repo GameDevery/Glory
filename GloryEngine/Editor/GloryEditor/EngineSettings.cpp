@@ -6,7 +6,12 @@
 
 #include <imgui.h>
 #include <IEngine.h>
+#include <SettingsContainer.h>
 #include <PropertySerializer.h>
+#include <Debug.h>
+#include <GloryAssert.h>
+#include <BinarySerialization.h>
+#include <BinaryStream.h>
 
 #include <IconsFontAwesome6.h>
 
@@ -14,6 +19,21 @@
 
 namespace Glory::Editor
 {
+    Utils::YAMLFileRef& EngineSettings::GetModuleSettingsFile(Module* pModule)
+    {
+        const ModuleMetaData& moduleMetaData = pModule->GetMetaData();
+        auto iter = m_SettingFiles.find(moduleMetaData.Name());
+        if (iter == m_SettingFiles.end())
+        {
+            std::filesystem::path moduleSettingsPath = ProjectSpace::GetOpenProject()->RootPath();
+            moduleSettingsPath.append("Modules").append(moduleMetaData.Name() + ".module");
+            iter = m_SettingFiles.emplace(moduleMetaData.Name(), moduleSettingsPath).first;
+
+            LoadDefaultSettings(iter->second, pModule->GetSettings());
+        }
+        return iter->second;
+    }
+
 	bool EngineSettings::OnGui()
 	{
         DrawLeftPanel();
@@ -32,11 +52,65 @@ namespace Glory::Editor
             ModuleSettings& settings = pModule->Settings();
             std::filesystem::path settingsPath = pProject->ModuleSettingsPath();
             settingsPath.append(moduleName + ".yaml");
+
+            if (pModule->GetSettings() && std::filesystem::exists(settingsPath))
+            {
+                std::filesystem::remove(settingsPath);
+                continue;
+            }
+
             YAML::Emitter out;
             out << settings.Node();
             std::ofstream outFile(settingsPath);
             outFile << out.c_str();
             outFile.close();
+        }
+
+        for (auto& [name, file] : m_SettingFiles)
+            file.Save();
+    }
+
+    void EngineSettings::OnSettingsLoaded()
+    {
+        Undo::RegisterChangeHandler(".module", "", [this](Utils::YAMLFileRef& file, const std::filesystem::path& path) {
+			OnModuleSettingsChanged(file, path);
+		});
+
+        EditorApplication* pApp = EditorApplication::GetInstance();
+        IEngine* pEngine = pApp->GetEngine();
+        auto& serializers = pApp->GetSerializers();
+
+        for (size_t i = 0; i < pEngine->ModulesCount(); ++i)
+        {
+            Module* pModule = pEngine->GetModule(i);
+            SettingsBase* pSettings = pModule->GetSettings();
+            if (!pSettings) continue;
+            auto settingsFile = GetModuleSettingsFile(pModule);
+            serializers.DeserializeProperty(pSettings->GetType(), **pSettings, settingsFile);
+            pSettings->NotifyFullChange();
+        }
+    }
+
+    void EngineSettings::OnCompile(const std::filesystem::path& path)
+    {
+        EditorApplication* pApp = EditorApplication::GetInstance();
+        IEngine* pEngine = pApp->GetEngine();
+        auto& serializers = pApp->GetSerializers();
+
+        const std::filesystem::path modulesConfigPath = path.parent_path().parent_path().append("Modules/Config");
+        std::filesystem::create_directories(modulesConfigPath);
+
+        for (size_t i = 0; i < pEngine->ModulesCount(); ++i)
+        {
+            Module* pModule = pEngine->GetModule(i);
+            SettingsBase* pSettings = pModule->GetSettings();
+            if (!pSettings) continue;
+
+            std::filesystem::path configPath = modulesConfigPath;
+            configPath.append(pModule->GetMetaData().Name()).replace_extension(".gmodule");
+
+            Utils::BinaryFileStream fileStream{ configPath };
+            Utils::SerializeData(fileStream, pSettings->GetType(), **pSettings);
         }
     }
 
@@ -61,7 +135,7 @@ namespace Glory::Editor
 
         IEngine* pEngine = EditorApplication::GetInstance()->GetEngine();
 
-        for (size_t i = 0; i < pEngine->ModulesCount(); i++)
+        for (size_t i = 0; i < pEngine->ModulesCount(); ++i)
         {
             const std::string& moduleName = pEngine->GetModule(i)->GetMetaData().Name();
             if (moduleName.empty()) continue;
@@ -115,69 +189,181 @@ namespace Glory::Editor
         ImGui::Separator();
 
         ImGui::Spacing();
-        ModuleSettings& settings = pModule->Settings();
-        YAML::Node& settingsNode = settings.Node();
 
-        if (!settings.HasSettings())
+        SettingsBase* pSettings = pModule->GetSettings();
+        if (pSettings)
         {
-            ImGui::TextUnformatted("There are no settings for this module.");
-            ImGui::EndChild();
-            return change;
+            auto& file = GetModuleSettingsFile(pModule);
+            change |= DrawSettings(*pSettings, file);
         }
-
-        for (auto groupItor = settings.GroupsBegin(); groupItor != settings.GroupsEnd(); ++groupItor)
+        else
         {
-            const std::string& group = *groupItor;
+            ModuleSettings& settings = pModule->Settings();
+            YAML::Node& settingsNode = settings.Node();
 
-            ImGui::PushFont(EditorPlatform::LargeFont);
-            ImGui::TextUnformatted(group.c_str());
-            ImGui::PopFont();
-
-            for (auto valueItor = settings.Begin(group); valueItor != settings.End(group); ++valueItor)
+            if (!settings.HasSettings())
             {
-                const std::string& value = *valueItor;
-                const uint32_t type = settings.Type(value);
-                const uint32_t elementType = settings.ElementType(value);
-                auto valueNode = settingsNode[value];
-                const bool isDefault = settings.IsSetToDefault(value);
+                ImGui::TextUnformatted("There are no settings for this module.");
+                ImGui::EndChild();
+                return change;
+            }
 
-                const float start = ImGui::GetCursorPosX();
-                const float totalWidth = ImGui::GetContentRegionAvail().x;
+            for (auto groupItor = settings.GroupsBegin(); groupItor != settings.GroupsEnd(); ++groupItor)
+            {
+                const std::string& group = *groupItor;
 
-                if (!isDefault)
+                ImGui::PushFont(EditorPlatform::LargeFont);
+                ImGui::TextUnformatted(group.c_str());
+                ImGui::PopFont();
+
+                for (auto valueItor = settings.Begin(group); valueItor != settings.End(group); ++valueItor)
                 {
-                    EditorUI::PushFlag(EditorUI::Flag::HasSmallButton);
-                    EditorUI::RemoveButtonPadding = 32.0f;
-                }
-                switch (type)
-                {
-                case ST_Enum:
-                case ST_Asset:
-                    change |= PropertyDrawer::GetPropertyDrawer(type)->Draw(value, valueNode, elementType, 0);
-                    break;
-                default:
-                    change |= PropertyDrawer::DrawProperty(value, settingsNode, type, elementType, 0);
-                    break;
-                }
-                if (!isDefault)
-                {
-                    EditorUI::RemoveButtonPadding = 24.0f;
-                    EditorUI::PopFlag();
-                    ImGui::SameLine();
-                    if (ImGui::Button(ICON_FA_ARROW_ROTATE_LEFT, { 24.0f, 24.0f }))
+                    const std::string& value = *valueItor;
+                    const uint32_t type = settings.Type(value);
+                    const uint32_t elementType = settings.ElementType(value);
+                    auto valueNode = settingsNode[value];
+                    const bool isDefault = settings.IsSetToDefault(value);
+
+                    const float start = ImGui::GetCursorPosX();
+                    const float totalWidth = ImGui::GetContentRegionAvail().x;
+
+                    if (!isDefault)
                     {
-                        settings.ResetToDefault(value);
-                        change = true;
+                        EditorUI::PushFlag(EditorUI::Flag::HasSmallButton);
+                        EditorUI::RemoveButtonPadding = 32.0f;
+                    }
+                    switch (type)
+                    {
+                    case ST_Enum:
+                    case ST_Asset:
+                        change |= PropertyDrawer::GetPropertyDrawer(type)->Draw(value, valueNode, elementType, 0);
+                        break;
+                    default:
+                        change |= PropertyDrawer::DrawProperty(value, settingsNode, type, elementType, 0);
+                        break;
+                    }
+                    if (!isDefault)
+                    {
+                        EditorUI::RemoveButtonPadding = 24.0f;
+                        EditorUI::PopFlag();
+                        ImGui::SameLine();
+                        if (ImGui::Button(ICON_FA_ARROW_ROTATE_LEFT, { 24.0f, 24.0f }))
+                        {
+                            settings.ResetToDefault(value);
+                            change = true;
+                        }
                     }
                 }
             }
+            if (change)
+                settings.SetDirty();
         }
 
         ImGui::EndChild();
 
-        if (change)
-            settings.SetDirty();
-
         return change;
+    }
+
+    bool EngineSettings::DrawSettings(SettingsBase& settings, Utils::YAMLFileRef& file)
+    {
+        bool change = false;
+        void* data = *settings;
+        const Utils::Reflect::TypeData* type = settings.GetType();
+        Undo::StartRecord("Engine Settings");
+        for (size_t i = 0; i < type->FieldCount(); ++i)
+        {
+            auto field = type->GetFieldData(i);
+            const std::filesystem::path propPath{ field->Name() };
+            auto flags = Reflect::GetFieldFlags(field);
+
+            std::stringstream str;
+            str << type->TypeName() << "::" << field->Name();
+            const std::string_view group = settings.GetGroup(str.str());
+
+            if (!group.empty())
+            {
+                ImGui::PushFont(EditorPlatform::LargeFont);
+                ImGui::TextUnformatted(group.data());
+                ImGui::PopFont();
+            }
+
+            change |= PropertyDrawer::DrawProperty(file, propPath, field->Type(), field->ArrayElementType(),
+                flags, field->DisplayName(), field->Description());
+        }
+        Undo::StopRecord();
+        return change;
+    }
+
+    void EngineSettings::OnModuleSettingsChanged(Utils::YAMLFileRef& file, const std::filesystem::path& path)
+    {
+        const std::string moduleName = file.Path().filename().replace_extension("").string();
+        EditorApplication* pApp = EditorApplication::GetInstance();
+        IEngine* pEngine = pApp->GetEngine();
+        Module* pModule = pEngine->GetModule(moduleName);
+        if (!pModule)
+        {
+            std::stringstream str;
+            str << "EngineSettings::OnModuleSettingsChanged > Unknown module " << moduleName;
+            pEngine->GetDebug().LogWarning(str.str());
+            return;
+        }
+
+        SettingsBase& settings = *pModule->GetSettings();
+        auto parentType = settings.GetType();
+        auto type = parentType;
+        void* data = *settings;
+        auto field = type->GetFieldData(0);
+        for (auto iter = path.begin(); iter != path.end(); ++iter)
+        {
+            const std::string pathComp = iter->string();
+            if (field && field->Type() == ST_Array)
+            {
+                std::stringstream str;
+                str << pathComp;
+                size_t index = 0;
+                str >> index;
+                data = Reflect::ElementAddress(data, field->ArrayElementType(), index);
+                parentType = type;
+                type = Reflect::GetTyeData(field->ArrayElementType());
+                field = field->GetArrayElementFieldData(index);
+                continue;
+            }
+
+            field = type->GetFieldData(pathComp);
+            GLORY_ASSERT(field, "Field is null");
+            data = field->GetAddress(data);
+            parentType = type;
+            type = Reflect::GetTyeData(field->ArrayElementType());
+        }
+
+        if (!field)
+            return;
+
+        auto prop = file[path];
+        GLORY_ASSERT(field, "Field is null");
+        pApp->GetSerializers().DeserializeProperty(field, data, prop);
+
+        std::stringstream str;
+        str << parentType->TypeName() << "::" << field->Name();
+        settings.NotifyChange(str.str());
+    }
+
+    void EngineSettings::LoadDefaultSettings(Utils::YAMLFileRef& file, SettingsBase* pSettings)
+    {
+        if (!pSettings) return;
+        auto type = pSettings->GetType();
+        void* data = **pSettings;
+
+        EditorApplication* pApp = EditorApplication::GetInstance();
+        auto& serializers = pApp->GetSerializers();
+
+        for (size_t i = 0; i < type->FieldCount(); ++i)
+        {
+            auto field = type->GetFieldData(i);
+            auto fieldNode = file[field->Name()];
+            if (fieldNode.Exists()) continue;
+            void* fieldData = field->GetAddress(data);
+            serializers.SerializeProperty(field, fieldData, fieldNode);
+        }
     }
 }

@@ -120,8 +120,10 @@ namespace Utils::Reflect
 		GLORY_ENGINE_API const size_t ModulesCount() const override;
 		GLORY_ENGINE_API Module* GetModule(size_t index) const override;
 
-		GLORY_ENGINE_API void LoadModuleSettings(const std::filesystem::path& overrideRootPath = "") override;
+		GLORY_ENGINE_API void LoadLegacyModuleSettings(const std::filesystem::path& overrideRootPath = "") override;
+		GLORY_ENGINE_API void LoadModuleSettings(const std::filesystem::path& settingsPath) override;
 
+		GLORY_ENGINE_API void RegisterTypes() override;
 		GLORY_ENGINE_API void Update() override;
 		GLORY_ENGINE_API void Initialize() override;
 		GLORY_ENGINE_API void Cleanup() override;

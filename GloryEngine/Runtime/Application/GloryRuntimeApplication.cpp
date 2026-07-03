@@ -61,6 +61,8 @@ namespace Glory
         std::filesystem::path moduleSettingsRootPath = dataPath;
         moduleSettingsRootPath = moduleSettingsRootPath.parent_path();
         moduleSettingsRootPath.append("Modules/Config");
+        m_Engine->RegisterTypes();
+        m_Engine->LoadLegacyModuleSettings(moduleSettingsRootPath);
         m_Engine->LoadModuleSettings(moduleSettingsRootPath);
         m_Engine->SetMainWindowInfo(std::move(windowCreateInfo));
 

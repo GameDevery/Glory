@@ -110,15 +110,15 @@ namespace Glory
 		/** @brief Run a callback on each queued for loading resource ID, then clear the queue.
 		 * @param callback Function to call on each resource ID.
 		 */
-		void HandleToLoad(std::function<void(UUID)> callback);
+		GLORY_ENGINE_API void HandleToLoad(std::function<void(UUID)> callback);
 		/** @brief Run a callback on each queued for immediate loading resource ID, then clear the queue.
 		 * @param callback Function to call on each resource ID.
 		 */
-		void HandleToLoadImmediately(std::function<void(UUID)> callback);
+		GLORY_ENGINE_API void HandleToLoadImmediately(std::function<void(UUID)> callback);
 		/** @brief Run a callback on each queued for unloading resource ID, then clear the queue.
 		 * @param callback Function to call on each resource ID.
 		 */
-		void HandleToUnload(std::function<void(UUID)> callback);
+		GLORY_ENGINE_API void HandleToUnload(std::function<void(UUID)> callback);
 
 		/** @brief Remove a resource from its resource manager.
 		 * @param id ID of the resource to remove.
@@ -146,7 +146,6 @@ namespace Glory
 		std::atomic_uint64_t m_CurrentLoadImmediatelyCount = 0ull;
 		static constexpr size_t LoadImmediatelyRingBufferSize = 1024;
 		std::array<UUID, LoadImmediatelyRingBufferSize> m_ToLoadImmediately;
-
 
 		std::set<UUID> m_ToLoadResources;
 		std::set<UUID> m_ToUnloadResources;

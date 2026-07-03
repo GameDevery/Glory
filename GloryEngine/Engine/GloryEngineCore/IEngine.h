@@ -116,8 +116,10 @@ namespace Glory
 		virtual const size_t ModulesCount() const = 0;
 		virtual Module* GetModule(size_t index) const = 0;
 
-		virtual void LoadModuleSettings(const std::filesystem::path& overrideRootPath = "") = 0;
+		virtual void LoadLegacyModuleSettings(const std::filesystem::path& overrideRootPath = "") = 0;
+		virtual void LoadModuleSettings(const std::filesystem::path& settingsPath) = 0;
 
+		virtual void RegisterTypes() = 0;
 		virtual void Update() = 0;
 		virtual void Initialize() = 0;
 		virtual void Cleanup() = 0;

@@ -1,12 +1,26 @@
 #pragma once
 #include "OpenGLDevice.h"
 
+#include <SettingsContainer.h>
+
 #include <Version.h>
 #include <Module.h>
 #include <GL/glew.h>
 
 namespace Glory
 {
+	/** @brief OpenGL settings struct */
+	struct OpenGLSettings
+	{
+		/** @brief Constructor */
+		OpenGLSettings(): m_CmdBufferEmulationEnabled(true) {}
+
+		REFLECTABLE_DESCRIPTIVE(OpenGLSettings,
+			(bool, m_CmdBufferEmulationEnabled, "Enable Command Buffer Emulation",
+				"Use command buffer emulation for compatibility and to support multi-threaded command recording.")
+		);
+	};
+
 	class OpenGLGraphicsModule : public Module
 	{
 	public:
@@ -20,14 +34,15 @@ namespace Glory
 		GLORY_MODULE_VERSION_H(0, 3, 0);
 
 	protected:
+		virtual void RegisterTypes() override;
+		virtual void InitializeSettings() override;
 		virtual void PreInitialize() override;
 		virtual void Initialize() override;
 		virtual void Cleanup() override;
-		virtual void Update() override;
-		virtual void LoadSettings(ModuleSettings& settings) override;
 
 	private:
 		/* OpenGL can only have 1 device */
 		OpenGLDevice m_Device;
+		SettingsContainer<OpenGLSettings> m_Settings;
 	};
 }

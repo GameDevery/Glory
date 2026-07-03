@@ -13,6 +13,12 @@ if (!node.Exists() || !node.Is##nodeType()) \
 	node.Set(YAML::Node(YAML::NodeType::nodeType)); \
 }
 
+namespace Glory
+{
+	struct SettingsBase;
+	class Module;
+}
+
 namespace Glory::Editor
 {
 	struct ActionRecord;
@@ -79,15 +85,24 @@ namespace Glory::Editor
 	public:
 		EngineSettings();
 
+		Utils::YAMLFileRef& GetModuleSettingsFile(Module* pModule);
+
 	private:
 		virtual bool OnGui() override;
 		void OnSave(ProjectSpace* pProject) override;
+		void OnSettingsLoaded() override;
+		void OnCompile(const std::filesystem::path& path) override;
 
 		void DrawLeftPanel();
 		bool DrawRightPanel();
+		bool DrawSettings(SettingsBase& settings, Utils::YAMLFileRef& file);
+
+		void OnModuleSettingsChanged(Utils::YAMLFileRef& file, const std::filesystem::path& path);
+		void LoadDefaultSettings(Utils::YAMLFileRef& file, SettingsBase* pSettings);
 
 	private:
 		size_t m_MenuIndex;
+		std::map<std::string, Utils::YAMLFileRef> m_SettingFiles;
 	};
 
 	class LayerSettings : public ProjectSettings

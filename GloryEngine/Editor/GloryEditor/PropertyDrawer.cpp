@@ -1,6 +1,9 @@
 #include "PropertyDrawer.h"
 #include "AssetReferencePropertyDrawer.h"
 #include "ValueChangeAction.h"
+
+#include <GloryAssert.h>
+
 #include <imgui.h>
 #include <algorithm>
 
@@ -88,7 +91,11 @@ namespace Glory::Editor
 
 	struct PathGuard
 	{
-		PathGuard(const std::string name)
+		PathGuard(const std::string& name)
+		{
+			PropertyDrawer::PushPath(name);
+		}
+		PathGuard(const std::string_view name)
 		{
 			PropertyDrawer::PushPath(name);
 		}
@@ -262,10 +269,7 @@ namespace Glory::Editor
 
 		const TypeData* pTypeData = Reflect::GetTyeData(typeHash);
 		if (pTypeData)
-		{
-			/* TODO */
-			throw new std::exception("Not yet implemented!");
-		}
+			GLORY_ASSERT_UNREACHABLE_CODE();
 
 		ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "%s", path.filename().string().c_str());
 		DrawTooltip(tooltip);
@@ -304,6 +308,11 @@ namespace Glory::Editor
 	}
 
 	void PropertyDrawer::PushPath(const std::string& name)
+	{
+		m_CurrentPropertyPath.append(name);
+	}
+
+	void PropertyDrawer::PushPath(const std::string_view name)
 	{
 		m_CurrentPropertyPath.append(name);
 	}

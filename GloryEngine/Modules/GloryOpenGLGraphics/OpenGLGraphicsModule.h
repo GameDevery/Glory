@@ -9,8 +9,10 @@
 
 namespace Glory
 {
+	/** @brief OpenGL settings struct */
 	struct OpenGLSettings
 	{
+		/** @brief Constructor */
 		OpenGLSettings(): m_CmdBufferEmulationEnabled(true) {}
 
 		REFLECTABLE_DESCRIPTIVE(OpenGLSettings,

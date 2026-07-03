@@ -15,8 +15,10 @@ GLORY_MODULE_H(GLORY_RENDERER_API)
 
 namespace Glory
 {
+	/** @brief Renderer settings struct */
 	struct GloryRendererSettings
 	{
+		/** @brief Constructor */
 		GloryRendererSettings() { }
 
 		REFLECTABLE_DESCRIPTIVE(GloryRendererSettings,

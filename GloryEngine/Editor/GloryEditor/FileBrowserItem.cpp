@@ -356,7 +356,8 @@ namespace Glory::Editor
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f, 0.0f });
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
 		ImGui::PushStyleColor(ImGuiCol_Border, {1.0f, 1.0f, 0.0f, m_HighlightFade });
-		ImGui::BeginChild("##file", itemSize, m_HighlightFade > 0.0f, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+		ImGui::BeginChild("##file", itemSize, m_HighlightFade > 0.0f ? ImGuiChildFlags_Borders : 0,
+			ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 		ImGui::PopStyleVar(2);
 		ImGui::PopStyleColor();
 
@@ -413,7 +414,7 @@ namespace Glory::Editor
 			}
 
 			ImGui::PopStyleColor();
-			ImGui::SetItemAllowOverlap();
+			ImGui::SetNextItemAllowOverlap();
 			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
 			{
 				m_pSelectedFolder = this;
@@ -468,7 +469,7 @@ namespace Glory::Editor
 		}
 
 		ImGui::PopStyleColor();
-		ImGui::SetItemAllowOverlap();
+		ImGui::SetNextItemAllowOverlap();
 
 		if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
 		{

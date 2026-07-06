@@ -30,7 +30,7 @@ namespace Glory::Editor
 
 	void ProfilerWindow::MenuBar()
 	{
-		ImVec2 windowSize = ImGui::GetWindowSize();
+		const ImVec2 windowSize = ImGui::GetWindowSize();
 		if (ImGui::BeginChild("Menu Bar", ImVec2(windowSize.x, 24.0f)))
 		{
 
@@ -40,7 +40,6 @@ namespace Glory::Editor
 				m_CurrentlyInspectingSampleIndex = -1;
 			}
 		}
-
 		ImGui::EndChild();
 	}
 
@@ -142,7 +141,7 @@ namespace Glory::Editor
 					}
 				}
 
-				ImPlot::PushStyleVar(ImPlotStyleVar_FillAlpha, 0.25f);
+				ImPlot::PushStyleVar(ImPlotStyleVar_MinorAlpha, 0.25f);
 
 				for (size_t i = 0; i < maxValues.size(); i++)
 				{
@@ -271,7 +270,7 @@ namespace Glory::Editor
 				ImGui::TableNextRow(ImGuiTableRowFlags_None, 0.0f);
 
 				ImGui::TableSetColumnIndex(0);
-				ImGuiSelectableFlags selectable_flags = ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowItemOverlap;
+				ImGuiSelectableFlags selectable_flags = ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap;
 
 				if (ImGui::Selectable("##", false, selectable_flags, ImVec2(0, 0.0f)))
 				{

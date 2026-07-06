@@ -128,7 +128,7 @@ namespace Glory::Editor
 
 			ImGui::PushID(key.data());
 			ImGui::BeginChild(key.data(), ImVec2{ 0.0f, inPlayMode && debuggingState && debuggingFSM ? 96.0f : 68.0f },
-				true, ImGuiWindowFlags_AlwaysAutoResize);
+				ImGuiChildFlags_Borders | ImGuiChildFlags_AlwaysAutoResize | ImGuiChildFlags_AutoResizeX | ImGuiChildFlags_AutoResizeY);
 			change |= EditorUI::InputText(file, name.Path());
 
 			Undo::StartRecord("Change Property");

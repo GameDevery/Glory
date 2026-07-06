@@ -124,7 +124,7 @@ namespace Glory::Editor
 			if (ImGui::IsKeyPressed(ImGuiKey_Escape))
 			{
 				/* Unbind */
-				Shortcuts::SetShortcut(m_RebindingShortcut, ImGuiKey_None, ImGuiModFlags_None);
+				Shortcuts::SetShortcut(m_RebindingShortcut, ImGuiKey_None, ImGuiMod_None);
 				return;
 			}
 
@@ -139,7 +139,7 @@ namespace Glory::Editor
 			{
 				if (!ImGui::IsKeyDown(ALLOWED_SHORTCUT_KEYS[i])) continue;
 				/* Bind to current input */
-				Shortcuts::SetShortcut(m_RebindingShortcut, ALLOWED_SHORTCUT_KEYS[i], ImGui::GetIO().KeyMods);
+				Shortcuts::SetShortcut(m_RebindingShortcut, ALLOWED_SHORTCUT_KEYS[i], ImGuiKey(ImGui::GetIO().KeyMods));
 				m_RebindingShortcut = "";
 				break;
 			}

@@ -258,7 +258,7 @@ namespace Glory::Editor
 		ImGui::EndTabBar();
 
 		/* Save off menu bar height for later. */
-		MENUBAR_SIZE = ImGui::GetCurrentWindow()->MenuBarHeight();
+		MENUBAR_SIZE = ImGui::GetCurrentWindow()->MenuBarHeight;
 		ImGui::End();
 
 		m_pMainWindows[TabIndex]->DrawGui(WORKTABS_SIZE - MENUBAR_SIZE);
@@ -407,7 +407,7 @@ namespace Glory::Editor
 		Shortcuts::SetShortcut(Shortcut_File_LoadScene, ImGuiKey_O, ImGuiMod_Ctrl);
 		Shortcuts::SetShortcut(Shortcut_File_Exit, ImGuiKey_Escape, ImGuiMod_Ctrl);
 		Shortcuts::SetShortcut(Shortcut_File_Preferences, ImGuiKey_P, ImGuiMod_Ctrl);
-		Shortcuts::SetShortcut(Shortcut_File_SaveProject, ImGuiKey_S, ImGuiMod_Ctrl | ImGuiMod_Shift);
+		Shortcuts::SetShortcut(Shortcut_File_SaveProject, ImGuiKey_S, ImGuiKey(ImGuiMod_Ctrl | ImGuiMod_Shift));
 		Shortcuts::SetShortcut(Shortcut_About, ImGuiKey_F1, ImGuiMod_None);
 		Shortcuts::SetShortcut(Shortcut_Play_Start, ImGuiKey_F5, ImGuiMod_None);
 		Shortcuts::SetShortcut(Shortcut_Play_Stop, ImGuiKey_F6, ImGuiMod_None);
@@ -427,8 +427,8 @@ namespace Glory::Editor
 		Shortcuts::SetShortcut(Shortcut_View_Orthographic, ImGuiKey_O, ImGuiMod_None);
 		Shortcuts::SetShortcut(Shortcut_View_Focus, ImGuiKey_F, ImGuiMod_None);
 		Shortcuts::SetShortcut(Shortcut_Edit_Undo, ImGuiKey_Z, ImGuiMod_Ctrl);
-		Shortcuts::SetShortcut(Shortcut_Edit_Redo, ImGuiKey_Z, ImGuiMod_Ctrl | ImGuiMod_Shift);
-		Shortcuts::SetShortcut(Shortcut_Edit_History, ImGuiKey_H, ImGuiMod_Ctrl | ImGuiMod_Shift);
+		Shortcuts::SetShortcut(Shortcut_Edit_Redo, ImGuiKey_Z, ImGuiKey(ImGuiMod_Ctrl | ImGuiMod_Shift));
+		Shortcuts::SetShortcut(Shortcut_Edit_History, ImGuiKey_H, ImGuiKey(ImGuiMod_Ctrl | ImGuiMod_Shift));
 		Shortcuts::SetShortcut(Gizmos::Shortcut_Gizmos_Translate, ImGuiKey_W, ImGuiMod_None);
 		Shortcuts::SetShortcut(Gizmos::Shortcut_Gizmos_Rotate, ImGuiKey_R, ImGuiMod_None);
 		Shortcuts::SetShortcut(Gizmos::Shortcut_Gizmos_Scale, ImGuiKey_S, ImGuiMod_None);
@@ -499,12 +499,12 @@ namespace Glory::Editor
 		ObjectMenu::AddMenuItem("Convert to Prefab", &EntitySceneObjectEditor::ConvertToPrefabMenuItem, T_SceneObject);
 		ObjectMenu::AddMenuItem("Unpack Prefab", &EntitySceneObjectEditor::UnpackPrefabMenuItem, T_SceneObject);
 
-		Shortcuts::SetShortcut(Shortcut_Copy, ImGuiKey_C, ImGuiModFlags_Ctrl);
-		Shortcuts::SetShortcut(Shortcut_Paste, ImGuiKey_V, ImGuiModFlags_Ctrl);
-		Shortcuts::SetShortcut(Shortcut_Duplicate, ImGuiKey_D, ImGuiModFlags_Ctrl);
-		Shortcuts::SetShortcut(Shortcut_Delete, ImGuiKey_Delete, ImGuiModFlags_None);
-		Shortcuts::SetShortcut(Shortcut_Rename, ImGuiKey_F2, ImGuiModFlags_None);
-		Shortcuts::SetShortcut(Shortcut_Package, ImGuiKey_P, ImGuiModFlags_Ctrl);
+		Shortcuts::SetShortcut(Shortcut_Copy, ImGuiKey_C, ImGuiMod_Ctrl);
+		Shortcuts::SetShortcut(Shortcut_Paste, ImGuiKey_V, ImGuiMod_Ctrl);
+		Shortcuts::SetShortcut(Shortcut_Duplicate, ImGuiKey_D, ImGuiMod_Ctrl);
+		Shortcuts::SetShortcut(Shortcut_Delete, ImGuiKey_Delete, ImGuiMod_None);
+		Shortcuts::SetShortcut(Shortcut_Rename, ImGuiKey_F2, ImGuiMod_None);
+		Shortcuts::SetShortcut(Shortcut_Package, ImGuiKey_P, ImGuiMod_Ctrl);
 
 		FileBrowserItem::ObjectDNDEventDispatcher().AddListener([](const FileBrowserItem::ObjectDNDEvent& e) {
 			Entity entity = EditorApplication::GetInstance()->GetSceneManager().GetOpenScene(e.Object->SceneID())->GetEntityByEntityID(e.Object->EntityID());

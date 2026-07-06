@@ -69,7 +69,7 @@ namespace Glory::Editor
 
 			ImGui::SetCursorPosX(cursorPos.x + x * 32.0f);
 			ImGui::SetCursorPosY(startCursorPos.y);
-			ImGui::Selectable("##back", highlight, ImGuiSelectableFlags_AllowItemOverlap, { 24.0f, lastMatrixHeight });
+			ImGui::Selectable("##back", highlight, ImGuiSelectableFlags_AllowOverlap, { 24.0f, lastMatrixHeight });
 			ImGui::SetCursorPos(cursorPos);
 			for (size_t i = name.size(); i > 0; --i)
 			{
@@ -105,7 +105,7 @@ namespace Glory::Editor
 				{
 					const bool highlight = y == hoverY;
 
-					ImGui::Selectable("##back", highlight, ImGuiSelectableFlags_AllowItemOverlap, { 0.0f, 24.0f });
+					ImGui::Selectable("##back", highlight, ImGuiSelectableFlags_AllowOverlap, { 0.0f, 24.0f });
 					ImGui::SameLine();
 
 					ImGui::TextColored({ highlight ? 0.0f : 1.0f, 1.0f, highlight ? 0.0f : 1.0f, 1.0f }, "%s", pYLayer->m_Name.c_str());

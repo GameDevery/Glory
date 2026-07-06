@@ -118,11 +118,11 @@ namespace Glory::Editor
     {
         ImGuiIO& io = ImGui::GetIO();
         ImGui::PushFont(EditorPlatform::LargeFont);
-        ImGui::BeginChild("LeftPanel", ImVec2(250.0f, 0.0f), true);
-        ImGui::BeginChild("LeftPanelHeader", ImVec2(0.0f, 50.0f), false);
+        ImGui::BeginChild("LeftPanel", ImVec2(250.0f, 0.0f), ImGuiChildFlags_Borders);
+        ImGui::BeginChild("LeftPanelHeader", ImVec2(0.0f, 50.0f), 0);
 
         ImVec2 contentRegionAvail = ImGui::GetContentRegionAvail();
-        float size = EditorPlatform::LargeFont->FontSize;
+        float size = EditorPlatform::LargeFont->LegacySize;
         float cursorPosY = ImGui::GetCursorPosY();
         ImGui::SetCursorPosY(ImGui::GetCursorPosY() - (size / 2.0f) + (contentRegionAvail.y / 2.0f));
         ImGui::TextUnformatted("Glory Engine");
@@ -131,7 +131,7 @@ namespace Glory::Editor
 
         ImGui::EndChild();
         ImGui::Separator();
-        ImGui::BeginChild("LeftPanelBody", ImVec2(0.0f, 0.0f), false);
+        ImGui::BeginChild("LeftPanelBody", ImVec2(0.0f, 0.0f), 0);
 
         IEngine* pEngine = EditorApplication::GetInstance()->GetEngine();
 
@@ -165,7 +165,7 @@ namespace Glory::Editor
         bool change = false;
 
         ImGui::SameLine();
-        ImGui::BeginChild("RightPanel", ImVec2(), true);
+        ImGui::BeginChild("RightPanel", ImVec2(), ImGuiChildFlags_Borders);
 
         IEngine* pEngine = EditorApplication::GetInstance()->GetEngine();
         Module* pModule = pEngine->GetModule(m_MenuIndex);

@@ -135,7 +135,7 @@ namespace Glory::Editor
 				const std::string uuidString = std::to_string(entity.EntityUUID());
 				ImGui::PushID(uuidString.data());
 				const bool selected = *sceneValue == pLastScene->GetUUID() && *objectValue == entity.EntityUUID();
-				if (ImGui::Selectable("##selectable", selected, ImGuiSelectableFlags_AllowItemOverlap))
+				if (ImGui::Selectable("##selectable", selected, ImGuiSelectableFlags_AllowOverlap))
 				{
 					*sceneValue = pLastScene->GetUUID();
 					*objectValue = entity.EntityUUID();

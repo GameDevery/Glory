@@ -103,7 +103,7 @@ namespace Glory::Editor
 
 			ImGui::TableHeadersRow();
 
-			static const ImGuiSelectableFlags selectableFlags = ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowItemOverlap;
+			static const ImGuiSelectableFlags selectableFlags = ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap;
 
 			for (size_t row_n = 0; row_n < shaderCount; ++row_n)
 			{
@@ -319,7 +319,7 @@ namespace Glory::Editor
 		if (error)
 		{
 			const float childHeight = ImGui::CalcTextSize("A").y*6;
-			ImGui::BeginChild("error", { 0.0f, childHeight }, true, ImGuiWindowFlags_MenuBar);
+			ImGui::BeginChild("error", { 0.0f, childHeight }, ImGuiChildFlags_Borders, ImGuiWindowFlags_MenuBar);
 			if (ImGui::BeginMenuBar())
 			{
 				ImGui::TextColored({ 1.0f, 0.0f, 0.0f, 1.0f }, ICON_FA_CIRCLE_EXCLAMATION);

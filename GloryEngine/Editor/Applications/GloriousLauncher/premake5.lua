@@ -13,6 +13,10 @@ project "GloriousLauncher"
 	{
 		"**.h",
 		"**.cpp",
+		"%{SubmodoleDirs.ImGui}/backends/imgui_impl_opengl3.h",
+		"%{SubmodoleDirs.ImGui}/backends/imgui_impl_opengl3.cpp",
+		"%{SubmodoleDirs.ImGui}/backends/imgui_impl_sdl2.h",
+		"%{SubmodoleDirs.ImGui}/backends/imgui_impl_sdl2.cpp",
 		"premake5.lua"
 	}
 
@@ -26,6 +30,8 @@ project "GloriousLauncher"
 
 		"%{GloryIncludeDir.enginecore}",
 		"%{GloryIncludeDir.api}",
+
+		"%{SubmodoleDirs.ImGui}/backends",
 
 		"%{IncludeDir.Version}",
 		"%{IncludeDir.yaml_cpp}",

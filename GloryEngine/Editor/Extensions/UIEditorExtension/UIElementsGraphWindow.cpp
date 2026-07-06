@@ -202,7 +202,7 @@ namespace Glory::Editor
 
 		if (first)
 		{
-			ImGui::InvisibleButton("##reorderbefore", ImVec2(ImGui::GetWindowContentRegionWidth(), 2.0f));
+			ImGui::InvisibleButton("##reorderbefore", ImVec2(ImGui::GetContentRegionAvail().x, 2.0f));
 			DragAndDrop.HandleDragAndDropTarget([&](uint32_t dndHash, const ImGuiPayload* pPayload) {
 				if (dndHash != ResourceTypes::GetHash<UIElementType>()) return;
 				const UIElementType& payload = *(const UIElementType*)pPayload->Data;
@@ -332,7 +332,7 @@ namespace Glory::Editor
 			if (childCount > 0) ImGui::TreePop();
 		}
 
-		ImGui::InvisibleButton("##reorderafter", ImVec2(ImGui::GetWindowContentRegionWidth(), 2.0f));
+		ImGui::InvisibleButton("##reorderafter", ImVec2(ImGui::GetContentRegionAvail().x, 2.0f));
 		DragAndDrop.HandleDragAndDropTarget([&](uint32_t dndHash, const ImGuiPayload* pPayload) {
 			if (dndHash != ResourceTypes::GetHash<UIElementType>()) return;
 			const UIElementType& payload = *(const UIElementType*)pPayload->Data;

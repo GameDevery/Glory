@@ -251,7 +251,7 @@ namespace Glory::Editor
 
 		if (index == 0)
 		{
-			ImGui::InvisibleButton("##reorderbefore", ImVec2(ImGui::GetWindowContentRegionWidth(), 2.0f));
+			ImGui::InvisibleButton("##reorderbefore", ImVec2(ImGui::GetContentRegionAvail().x, 2.0f));
 			DragAndDrop.HandleDragAndDropTarget([&](uint32_t dndHash, const ImGuiPayload* pPayload) {
 				GScene* pScene = entity.GetScene();
 				Entity parentEntity = entity.ParentEntity();
@@ -386,7 +386,7 @@ namespace Glory::Editor
 			if (childCount > 0) ImGui::TreePop();
 		}
 
-		ImGui::InvisibleButton("##reorderafter", ImVec2(ImGui::GetWindowContentRegionWidth(), 2.0f));
+		ImGui::InvisibleButton("##reorderafter", ImVec2(ImGui::GetContentRegionAvail().x, 2.0f));
 		DragAndDrop.HandleDragAndDropTarget([&](uint32_t dndHash, const ImGuiPayload* pPayload) {
 			Entity parent = entity.ParentEntity();
 			if (HandleAssetDragAndDrop(parent.GetEntityID(), pScene, dndHash, pPayload)) return;

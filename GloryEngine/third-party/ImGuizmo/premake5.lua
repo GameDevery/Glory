@@ -10,8 +10,8 @@ project "ImGuizmo"
 
 	files
 	{
-        "%{ImGuizmoDir}/*.h",
-        "%{ImGuizmoDir}/*.cpp",
+        "%{ImGuizmoDir}/src/*.h",
+        "%{ImGuizmoDir}/src/*.cpp",
 	}
         
     includedirs

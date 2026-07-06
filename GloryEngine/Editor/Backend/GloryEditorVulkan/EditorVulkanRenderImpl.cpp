@@ -109,12 +109,15 @@ namespace Glory::Editor
 		vulkanInfo.MinImageCount = MINIMAGECOUNT;
 		vulkanInfo.ImageCount = m_MainWindow.ImageCount;
 
-		ImGui_ImplVulkan_Init(&vulkanInfo, m_MainWindow.RenderPass);
+		vulkanInfo.PipelineInfoMain.RenderPass = m_MainWindow.RenderPass;
+		vulkanInfo.PipelineInfoMain.Subpass = 0;
+		vulkanInfo.PipelineInfoMain.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
+
+		ImGui_ImplVulkan_Init(&vulkanInfo);
 	}
 
 	void EditorVulkanRenderImpl::UploadImGUIFonts()
 	{
-		UploadFonts(&m_MainWindow);
 	}
 
 	void EditorVulkanRenderImpl::Shutdown()
@@ -150,7 +153,8 @@ namespace Glory::Editor
 		// Select Surface Format
 		const VkFormat requestSurfaceImageFormat[] = { VK_FORMAT_B8G8R8A8_UNORM, VK_FORMAT_R8G8B8A8_UNORM, VK_FORMAT_B8G8R8_UNORM, VK_FORMAT_R8G8B8_UNORM };
 		const VkColorSpaceKHR requestSurfaceColorSpace = VK_COLORSPACE_SRGB_NONLINEAR_KHR;
-		wd->SurfaceFormat = ImGui_ImplVulkanH_SelectSurfaceFormat(physicalDevice, wd->Surface, requestSurfaceImageFormat, (size_t)IM_ARRAYSIZE(requestSurfaceImageFormat), requestSurfaceColorSpace);
+		wd->SurfaceFormat = ImGui_ImplVulkanH_SelectSurfaceFormat(physicalDevice, wd->Surface, requestSurfaceImageFormat,
+			(size_t)IM_ARRAYSIZE(requestSurfaceImageFormat), requestSurfaceColorSpace);
 
 		// Select Present Mode
 #ifdef IMGUI_UNLIMITED_FRAME_RATE
@@ -163,7 +167,8 @@ namespace Glory::Editor
 
 		// Create Swapchain, RenderPass, Framebuffer, etc.
 		IM_ASSERT(MINIMAGECOUNT >= 2);
-		ImGui_ImplVulkanH_CreateOrResizeWindow(instance, physicalDevice, device, wd, graphicsFamilyIndex, VK_NULL_HANDLE, width, height, MINIMAGECOUNT);
+		ImGui_ImplVulkanH_CreateOrResizeWindow(instance, physicalDevice, device, wd, graphicsFamilyIndex,
+			VK_NULL_HANDLE, width, height, MINIMAGECOUNT, 0);
 	}
 
 	void EditorVulkanRenderImpl::CreateDescriptorPool(VkDevice device)
@@ -193,41 +198,6 @@ namespace Glory::Editor
 
 		err = vkCreateDescriptorPool(device, &pool_info, NULL, &m_DescriptorPool);
 		check_vk_result(err);
-	}
-
-	void EditorVulkanRenderImpl::UploadFonts(ImGui_ImplVulkanH_Window* wd)
-	{
-		VkPhysicalDevice physicalDevice = (VkPhysicalDevice)m_pDevice->PhysicalDevice();
-		VkDevice device = (VkDevice)m_pDevice->LogicalDevice();
-		uint32_t graphicsFamilyIndex = m_pDevice->GraphicsFamily();
-
-		VkResult err;
-		// Use any command queue
-		VkCommandPool command_pool = wd->Frames[wd->FrameIndex].CommandPool;
-		VkCommandBuffer command_buffer = wd->Frames[wd->FrameIndex].CommandBuffer;
-
-		err = vkResetCommandPool(device, command_pool, 0);
-		check_vk_result(err);
-		VkCommandBufferBeginInfo begin_info = {};
-		begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-		begin_info.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-		err = vkBeginCommandBuffer(command_buffer, &begin_info);
-		check_vk_result(err);
-
-		ImGui_ImplVulkan_CreateFontsTexture(command_buffer);
-
-		VkSubmitInfo end_info = {};
-		end_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-		end_info.commandBufferCount = 1;
-		end_info.pCommandBuffers = &command_buffer;
-		err = vkEndCommandBuffer(command_buffer);
-		check_vk_result(err);
-		err = vkQueueSubmit(m_pDevice->GraphicsQueue(), 1, &end_info, VK_NULL_HANDLE);
-		check_vk_result(err);
-
-		err = vkDeviceWaitIdle(device);
-		check_vk_result(err);
-		ImGui_ImplVulkan_DestroyFontUploadObjects();
 	}
 
 	void EditorVulkanRenderImpl::FrameRender(ImGui_ImplVulkanH_Window* wd, ImDrawData* draw_data)
@@ -361,7 +331,8 @@ namespace Glory::Editor
 			if (width > 0 && height > 0)
 			{
 				ImGui_ImplVulkan_SetMinImageCount(MINIMAGECOUNT);
-				ImGui_ImplVulkanH_CreateOrResizeWindow(m_pDevice->GraphicsModule()->GetCInstance(), physicalDevice, device, &m_MainWindow, graphicsFamilyIndex, VK_NULL_HANDLE, width, height, MINIMAGECOUNT);
+				ImGui_ImplVulkanH_CreateOrResizeWindow(m_pDevice->GraphicsModule()->GetCInstance(),
+					physicalDevice, device, &m_MainWindow, graphicsFamilyIndex, VK_NULL_HANDLE, width, height, MINIMAGECOUNT, 0);
 				m_MainWindow.FrameIndex = 0;
 				m_SwapchainRebuild = false;
 			}

@@ -304,7 +304,7 @@ namespace Glory::Editor
 			" %s %s %s", entity.IsHierarchyActive() ? ICON_FA_EYE : ICON_FA_EYE_SLASH, entity.Name().data(), isPrefab && isPrefabMissing ? "(Missing)" : "");
 
 		const float compLabelsWidth = ImGui::CalcTextSize(componentLabels.data()).x;
-		const float availableWidth = ImGui::GetWindowContentRegionWidth() - ImGui::GetWindowPos().x;
+		const float availableWidth = ImGui::GetContentRegionAvail().x - ImGui::GetWindowPos().x;
 		ImGui::SameLine(availableWidth - compLabelsWidth);
 		ImGui::TextUnformatted(componentLabels.data());
 	}

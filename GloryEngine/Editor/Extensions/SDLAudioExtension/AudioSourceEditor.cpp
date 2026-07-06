@@ -22,7 +22,7 @@ namespace Glory::Editor
 	void DrawWarningWindow(const char* warning)
 	{
 		const float childHeight = ImGui::CalcTextSize("A").y * 3.5f;
-		ImGui::BeginChild("warning", { 0.0f, childHeight }, true, ImGuiWindowFlags_MenuBar);
+		ImGui::BeginChild("warning", { 0.0f, childHeight }, ImGuiChildFlags_Borders, ImGuiWindowFlags_MenuBar);
 		if (ImGui::BeginMenuBar())
 		{
 			ImGui::TextColored({ 1.0f, 1.0f, 0.0f, 1.0f }, ICON_FA_TRIANGLE_EXCLAMATION);

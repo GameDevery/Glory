@@ -1,4 +1,4 @@
-#include "imgui_impl_sdl.h"
+#include "imgui_impl_sdl2.h"
 #include "EditorSDLWindowImpl.h"
 #include <SDLWindow.h>
 #include <EditorWindow.h>
@@ -123,7 +123,6 @@ namespace Glory::Editor
 
 	void EditorSDLWindowImpl::NewFrame()
 	{
-		SDLWindow* pSDLWindow = (SDLWindow*)m_pMainWindow;
-		ImGui_ImplSDL2_NewFrame(pSDLWindow->GetSDLWindow());
+		ImGui_ImplSDL2_NewFrame();
 	}
 }

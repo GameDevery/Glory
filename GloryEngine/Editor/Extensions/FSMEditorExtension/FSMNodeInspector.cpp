@@ -255,7 +255,9 @@ namespace Glory::Editor
 
 					ImGui::BeginChild("scrollregion");
 					const float rowHeight = 22.0f;
-					ImGuiListClipper clipper{ int(searchResultCache.size()), rowHeight };
+					ImGuiListClipper clipper;
+					clipper.ItemsCount = int(searchResultCache.size());
+					clipper.ItemsHeight = rowHeight;
 
 					auto itorStart = searchResultCache.begin();
 					while (clipper.Step()) {
@@ -269,7 +271,7 @@ namespace Glory::Editor
 							ImGui::PushID(otherPropIDStr.data());
 							auto oltherProp = properties[otherPropIDStr];
 							const std::string name = oltherProp["Name"].As<std::string>();
-							if (ImGui::Selectable("##select", propID == otherPropID, ImGuiSelectableFlags_AllowItemOverlap, { 0.0f, rowHeight }))
+							if (ImGui::Selectable("##select", propID == otherPropID, ImGuiSelectableFlags_AllowOverlap, { 0.0f, rowHeight }))
 							{
 								propID = otherPropID;
 								propSet = true;

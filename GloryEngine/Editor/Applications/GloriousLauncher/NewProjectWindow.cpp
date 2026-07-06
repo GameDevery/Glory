@@ -107,7 +107,7 @@ namespace Glory::EditorLauncher
 
 	void NewProjectWindow::DrawHeader()
 	{
-		ImGui::BeginChild("Header", ImVec2(0.0f, 50.0f), true);
+		ImGui::BeginChild("Header", ImVec2(0.0f, 50.0f), ImGuiChildFlags_Borders);
 
 		ImVec2 regionAvail = ImGui::GetContentRegionAvail();
 		float maxHeight = regionAvail.y;
@@ -181,18 +181,18 @@ namespace Glory::EditorLauncher
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		ImGui::PushFont(LauncherHub::BoldLargeFont);
-		ImGui::BeginChild("LeftPanel", ImVec2(250.0f, 0.0f), true);
-		ImGui::BeginChild("LeftPanelHeader", ImVec2(0.0f, 50.0f), false);
+		ImGui::BeginChild("LeftPanel", ImVec2(250.0f, 0.0f), ImGuiChildFlags_Borders);
+		ImGui::BeginChild("LeftPanelHeader", ImVec2(0.0f, 50.0f));
 
 		ImVec2 contentRegionAvail = ImGui::GetContentRegionAvail();
-		float size = LauncherHub::BoldLargeFont->FontSize;
+		float size = LauncherHub::BoldLargeFont->LegacySize;
 		float cursorPosY = ImGui::GetCursorPosY();
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() - (size/2.0f) + (contentRegionAvail.y/2.0f));
 		ImGui::TextUnformatted("New Project");
 
 		ImGui::EndChild();
 
-		ImGui::BeginChild("LeftPanelBody", ImVec2(0.0f, 0.0f), false);
+		ImGui::BeginChild("LeftPanelBody", ImVec2(0.0f, 0.0f));
 
 		for (size_t i = 0; i < NewProjectMenu::NP_MAX; i++)
 		{
@@ -214,11 +214,11 @@ namespace Glory::EditorLauncher
 	void NewProjectWindow::DrawRightPanel()
 	{
 		ImGui::SameLine();
-		ImGui::BeginChild("RightPanel", ImVec2(), true);
+		ImGui::BeginChild("RightPanel", ImVec2(), ImGuiChildFlags_Borders);
 
 		DrawHeader();
 
-		ImGui::BeginChild("RightPanelBody", ImVec2(), true);
+		ImGui::BeginChild("RightPanelBody", ImVec2(), ImGuiChildFlags_Borders);
 		switch (m_CurrentMenu)
 		{
 		case Glory::EditorLauncher::General:
@@ -359,13 +359,13 @@ namespace Glory::EditorLauncher
 
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f, 0.0f });
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-			ImGui::BeginChild("##template", { templateSize, templateSize }, false, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+			ImGui::BeginChild("##template", { templateSize, templateSize }, 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 			ImGui::PopStyleVar(2);
 
 			ImGui::PushFont(LauncherHub::IconFontHuge);
 
 			const ImVec2 cursorPos = ImGui::GetCursorPos();
-			if (ImGui::Selectable("##templateButton", m_SelectedTemplate == i, ImGuiSelectableFlags_AllowItemOverlap, { templateSize, templateSize }))
+			if (ImGui::Selectable("##templateButton", m_SelectedTemplate == i, ImGuiSelectableFlags_AllowOverlap, { templateSize, templateSize }))
 				m_SelectedTemplate = (int)i;
 
 			const char* icon = TEMPLATE_ICONS.find(pTemplate->m_Name) != TEMPLATE_ICONS.end() ? TEMPLATE_ICONS.at(pTemplate->m_Name) : UNKNOWN_TEMPLATE_ICON;

@@ -27,6 +27,7 @@ project "GloriousLauncher"
 	includedirs
 	{
 		"%{DepsIncludeDir}",
+		"%{DepsIncludeDir}/SDL2",
 
 		"%{GloryIncludeDir.enginecore}",
 		"%{GloryIncludeDir.api}",
@@ -126,3 +127,7 @@ project "GloriousLauncher"
 		{
 			"glew32"
 		}
+
+	filter "files:**/imgui_impl_opengl3.cpp or files:**/imgui_impl_sdl2.cpp"
+		flags { "NoPCH" }
+	filter ""

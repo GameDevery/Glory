@@ -205,6 +205,8 @@ namespace Glory::EditorLauncher
         ImGui::SetCursorPosY(cursorPosY);
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + contentRegionAvail.x - contentRegionAvail.y);
 
+        ImGui::Dummy(ImVec2(250.0f, 50.0f));
+
         //if (ImGui::Button(ICON_FA_GEAR, ImVec2(contentRegionAvail.y, contentRegionAvail.y)))
         //{
         //

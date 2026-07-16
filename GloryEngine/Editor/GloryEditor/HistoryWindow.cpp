@@ -43,8 +43,7 @@ namespace Glory::Editor
 		const float itemHeight = 24.0f;
 
 		ImGuiListClipper clipper;
-		clipper.ItemsCount = (int)recordCount;
-		clipper.ItemsHeight = itemHeight;
+		clipper.Begin((int)recordCount, itemHeight);
 
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0.0f, 0.0f });
 

@@ -152,8 +152,7 @@ namespace Glory::Editor
 		ImGui::TableHeadersRow();
 
 		ImGuiListClipper clipper;
-		clipper.ItemsCount = m_SearchResultCache.size();
-		clipper.ItemsHeight = rowHeight + 2*ImGui::GetCurrentTable()->RowCellPaddingY;
+		clipper.Begin(m_SearchResultCache.size(), rowHeight + 2 * ImGui::GetCurrentTable()->RowCellPaddingY);
 
 		IEngine* pEngine = pApp->GetEngine();
 		Resources& resources = pEngine->GetResources();

@@ -89,7 +89,7 @@ namespace Glory::Editor
 
 		const TypeData* pStructTypeData = Reflect::GetTyeData(typeHash);
 		PropertyDrawer* pPropertyDrawer = PropertyDrawer::GetPropertyDrawer(typeHash);
-		if (pPropertyDrawer) return PropertyDrawer::DrawProperty(file, path, pStructTypeData->TypeHash(), pStructTypeData->InternalTypeHash(), flags, nullptr, nullptr);
+		if (pPropertyDrawer) return PropertyDrawer::DrawProperty(file, path, pStructTypeData->TypeHash(), pStructTypeData->InternalTypeHash(), flags, {}, {});
 
 		ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 

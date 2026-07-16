@@ -106,8 +106,7 @@ namespace Glory::Editor
 			ImGui::BeginChild("scrollregion");
 			const float rowHeight = 22.0f;
 			ImGuiListClipper clipper;
-			clipper.ItemsCount = int(searchResultCache.size());
-			clipper.ItemsHeight = rowHeight;
+			clipper.Begin(searchResultCache.size(), rowHeight);
 
 			auto itorStart = searchResultCache.begin();
 			while (clipper.Step()) {

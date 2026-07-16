@@ -104,8 +104,7 @@ namespace Glory::Editor
 			const float rowHeight = 24.0f;
 
 			ImGuiListClipper clipper;
-			clipper.ItemsCount = pipelineOrder.Size();
-			clipper.ItemsHeight = rowHeight + 2*ImGui::GetCurrentTable()->RowCellPaddingY;
+			clipper.Begin(pipelineOrder.Size(), rowHeight + 2*ImGui::GetCurrentTable()->RowCellPaddingY);
 
 			static std::pair<UUID, size_t> toMovePipeline{0ull, 0ull};
 			while (clipper.Step())

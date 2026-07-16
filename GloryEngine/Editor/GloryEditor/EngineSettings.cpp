@@ -129,6 +129,8 @@ namespace Glory::Editor
         ImGui::SetCursorPosY(cursorPosY);
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + contentRegionAvail.x - contentRegionAvail.y);
 
+        ImGui::Dummy({});
+
         ImGui::EndChild();
         ImGui::Separator();
         ImGui::BeginChild("LeftPanelBody", ImVec2(0.0f, 0.0f), 0);

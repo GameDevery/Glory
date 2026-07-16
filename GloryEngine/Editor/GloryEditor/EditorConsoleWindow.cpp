@@ -24,7 +24,7 @@ namespace Glory::Editor
 	{
 		// Reserve enough left-over height for 1 separator + 1 input text
 		const float footer_height_to_reserve = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing();
-		ImGui::BeginChild("ScrollingRegion", ImVec2(0, -footer_height_to_reserve), false, ImGuiWindowFlags_HorizontalScrollbar);
+		ImGui::BeginChild("ScrollingRegion", ImVec2(0, -footer_height_to_reserve), 0, ImGuiWindowFlags_HorizontalScrollbar);
 		if (ImGui::BeginPopupContextWindow())
 		{
 			//if (ImGui::Selectable("Clear")) ClearLog();

@@ -73,7 +73,7 @@ namespace Glory::Editor
 		ResourceTypes& resourceTypes = pEngine->GetResourceTypes();
 		const ResourceType* pPipelineType = resourceTypes.GetResourceType(pipelineHash);
 
-		const ImGuiSelectableFlags selectableFlags = ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowItemOverlap;
+		const ImGuiSelectableFlags selectableFlags = ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap;
 
 		ImGui::BeginChild("Render Settings");
 		bool change = false;
@@ -103,7 +103,8 @@ namespace Glory::Editor
 
 			const float rowHeight = 24.0f;
 
-			ImGuiListClipper clipper(pipelineOrder.Size(), rowHeight + 2 * ImGui::GetCurrentTable()->CellPaddingY);
+			ImGuiListClipper clipper;
+			clipper.Begin(pipelineOrder.Size(), rowHeight + 2*ImGui::GetCurrentTable()->RowCellPaddingY);
 
 			static std::pair<UUID, size_t> toMovePipeline{0ull, 0ull};
 			while (clipper.Step())

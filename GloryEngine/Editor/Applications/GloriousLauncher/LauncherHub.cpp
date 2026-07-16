@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "LauncherHub.h"
-#include "imgui_impl_sdl.h"
+#include "imgui_impl_sdl2.h"
 #include "imgui_impl_opengl3.h"
 #include "ProjectManager.h"
 #include "ProjectLock.h"
@@ -194,23 +194,25 @@ namespace Glory::EditorLauncher
     {
         ImGuiIO& io = ImGui::GetIO();
         ImGui::PushFont(BoldLargeFont);
-        ImGui::BeginChild("LeftPanel", ImVec2(250.0f, 0.0f), true);
-        ImGui::BeginChild("LeftPanelHeader", ImVec2(0.0f, 50.0f), false);
+        ImGui::BeginChild("LeftPanel", ImVec2(250.0f, 0.0f), ImGuiChildFlags_Borders);
+        ImGui::BeginChild("LeftPanelHeader", ImVec2(0.0f, 50.0f));
 
         ImVec2 contentRegionAvail = ImGui::GetContentRegionAvail();
-        float size = BoldLargeFont->FontSize;
+        float size = BoldLargeFont->LegacySize;
         float cursorPosY = ImGui::GetCursorPosY();
         ImGui::SetCursorPosY(ImGui::GetCursorPosY() - (size / 2.0f) + (contentRegionAvail.y / 2.0f));
         ImGui::TextUnformatted("Glory");
         ImGui::SetCursorPosY(cursorPosY);
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + contentRegionAvail.x - contentRegionAvail.y);
 
+        ImGui::Dummy(ImVec2(250.0f, 50.0f));
+
         //if (ImGui::Button(ICON_FA_GEAR, ImVec2(contentRegionAvail.y, contentRegionAvail.y)))
         //{
         //
         //}
         ImGui::EndChild();
-        ImGui::BeginChild("LeftPanelBody", ImVec2(0.0f, 0.0f), false);
+        ImGui::BeginChild("LeftPanelBody", ImVec2(0.0f, 0.0f));
 
         for (size_t i = 0; i < HubMenu::MAX; i++)
         {
@@ -232,7 +234,7 @@ namespace Glory::EditorLauncher
     void LauncherHub::DrawRightPanel()
     {
         ImGui::SameLine();
-        ImGui::BeginChild("RightPanel", ImVec2(), true);
+        ImGui::BeginChild("RightPanel", ImVec2(), ImGuiChildFlags_Borders);
 
         switch (m_CurrentMenu)
         {
@@ -310,7 +312,7 @@ namespace Glory::EditorLauncher
                 ImGui::TableNextRow(ImGuiTableRowFlags_None, 0.0f);
 
                 ImGui::TableSetColumnIndex(0);
-                ImGuiSelectableFlags selectable_flags = ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowItemOverlap;
+                ImGuiSelectableFlags selectable_flags = ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap;
 
                 std::string projectNameString(item->Name);
                 projectNameString += '\n';
@@ -447,7 +449,7 @@ namespace Glory::EditorLauncher
                 ImGui::TableNextRow(ImGuiTableRowFlags_None, 0.0f);
 
                 ImGui::TableSetColumnIndex(0);
-                ImGuiSelectableFlags selectable_flags = ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowItemOverlap;
+                ImGuiSelectableFlags selectable_flags = ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap;
 
                 std::string editorString("Version ");
                 std::string versionString;

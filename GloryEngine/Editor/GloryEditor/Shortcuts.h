@@ -21,7 +21,7 @@ namespace Glory::Editor
 		const std::function<void()> m_Action;
 		std::vector<std::function<void()>> m_MainWindowActions;
 		ImGuiKey m_Key;
-		ImGuiModFlags m_Mods;
+		ImGuiKey m_Mods;
 		bool m_Blocked;
 	};
 
@@ -59,7 +59,7 @@ namespace Glory::Editor
 		 * @param key The main key that triggers the action.
 		 * @param mods The modifiers that need to be active on the key to trigger the action.
 		 */
-		static GLORY_EDITOR_API void SetShortcut(std::string_view action, ImGuiKey key, ImGuiModFlags mods);
+		static GLORY_EDITOR_API void SetShortcut(std::string_view action, ImGuiKey key, ImGuiKey mods);
 
 		/*
 		 * @brief Gets a formatted string of the shortcut (Mod1 + ModN + Key).

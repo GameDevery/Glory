@@ -71,7 +71,7 @@ namespace Glory::Editor
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f, 0.0f });
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-		ImGui::BeginChild("##element", itemSize, false, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+		ImGui::BeginChild("##element", itemSize, 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 		ImGui::PopStyleVar(2);
 
 		const ImVec2 cursorPos = ImGui::GetCursorPos();
@@ -88,7 +88,7 @@ namespace Glory::Editor
 			ImGui::Text("%s %s", icon.data(), typeName.data());
 		});
 
-		ImGui::SetItemAllowOverlap();
+		ImGui::SetNextItemAllowOverlap();
 
 		const UUID documentID = pMainWindow->CurrentDocumentID();
 		UIDocument* pDocument = pMainWindow->CurrentDocument();
@@ -116,7 +116,7 @@ namespace Glory::Editor
 	static void DrawCategories(float height)
 	{
 		ImGuiWindowFlags window_flags = ImGuiWindowFlags_HorizontalScrollbar;
-		ImGui::BeginChild("Categories", ImVec2(0, height), false, window_flags);
+		ImGui::BeginChild("Categories", ImVec2(0, height), 0, window_flags);
 		for (size_t i = 0; i < ElementCategories.size(); ++i)
 		{
 			ImGuiSelectableFlags selectableFlags = ImGuiSelectableFlags_SpanAvailWidth;
@@ -131,7 +131,7 @@ namespace Glory::Editor
 	static void DrawElements(UIMainWindow* pMainWindow, float height)
 	{
 		ImGuiWindowFlags window_flags = ImGuiWindowFlags_HorizontalScrollbar;
-		ImGui::BeginChild("Elements", ImVec2(0, height), false, window_flags);
+		ImGui::BeginChild("Elements", ImVec2(0, height), 0, window_flags);
 
 		static const float iconSize = 64.0f;
 

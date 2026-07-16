@@ -151,7 +151,8 @@ namespace Glory::Editor
 		ImGui::TableSetupScrollFreeze(0, 1);
 		ImGui::TableHeadersRow();
 
-		ImGuiListClipper clipper(m_SearchResultCache.size(), rowHeight + 2*ImGui::GetCurrentTable()->CellPaddingY);
+		ImGuiListClipper clipper;
+		clipper.Begin(m_SearchResultCache.size(), rowHeight + 2 * ImGui::GetCurrentTable()->RowCellPaddingY);
 
 		IEngine* pEngine = pApp->GetEngine();
 		Resources& resources = pEngine->GetResources();
@@ -183,7 +184,7 @@ namespace Glory::Editor
 
 				if (ImGui::TableNextColumn())
 				{
-					ImGuiSelectableFlags selectableFlags = ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowItemOverlap;
+					ImGuiSelectableFlags selectableFlags = ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap;
 
 					if (ImGui::Selectable("##selectable", false, selectableFlags, ImVec2(0, rowHeight)))
 					{

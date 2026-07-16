@@ -10,11 +10,11 @@ namespace Glory::Editor
 	std::vector<std::string_view> Shortcuts::m_TriggeredThisFame;
 
 	Shortcut::Shortcut() :
-		m_Name("INVALID"), m_Action(NULL), m_Key(ImGuiKey_None), m_Mods(ImGuiModFlags_None), m_Blocked(false)
+		m_Name("INVALID"), m_Action(NULL), m_Key(ImGuiKey_None), m_Mods(ImGuiMod_None), m_Blocked(false)
 	{}
 
 	Shortcut::Shortcut(const char* action, std::function<void()> callback)
-		: m_Name(action), m_Action(callback), m_Key(ImGuiKey_None), m_Mods(ImGuiModFlags_None), m_Blocked(false)
+		: m_Name(action), m_Action(callback), m_Key(ImGuiKey_None), m_Mods(ImGuiMod_None), m_Blocked(false)
 	{}
 
 	const Shortcut* Shortcuts::AddAction(const char* action, std::function<void()> callback)
@@ -52,7 +52,7 @@ namespace Glory::Editor
 		return &m_Shortcuts.at(action);
 	}
 
-	void Shortcuts::SetShortcut(std::string_view action, ImGuiKey key, ImGuiModFlags mods)
+	void Shortcuts::SetShortcut(std::string_view action, ImGuiKey key, ImGuiKey mods)
 	{
 		if (m_Shortcuts.find(action) == m_Shortcuts.end()) return;
 		m_Shortcuts[action].m_Key = key;
@@ -66,13 +66,13 @@ namespace Glory::Editor
 
 		std::string shortcutString;
 		/* Check all mods */
-		if (shortcut->m_Mods & ImGuiModFlags_Ctrl)
+		if (shortcut->m_Mods & ImGuiMod_Ctrl)
 			shortcutString += "Ctrl + ";
-		if (shortcut->m_Mods & ImGuiModFlags_Shift)
+		if (shortcut->m_Mods & ImGuiMod_Shift)
 			shortcutString += "Shift + ";
-		if (shortcut->m_Mods & ImGuiModFlags_Alt)
+		if (shortcut->m_Mods & ImGuiMod_Alt)
 			shortcutString += "Alt + ";
-		if (shortcut->m_Mods & ImGuiModFlags_Super)
+		if (shortcut->m_Mods & ImGuiMod_Super)
 			shortcutString += "Super + ";
 
 		/* Add key */
@@ -124,7 +124,7 @@ namespace Glory::Editor
 			Utils::NodeValueRef shortcut = shortcuts[i];
 			std::string name = shortcut["Name"].As<std::string>("");
 			ImGuiKey key = ImGuiKey(shortcut["Key"].As<int>(0));
-			ImGuiModFlags mods = shortcut["Mods"].As<int>(0);
+			ImGuiKey mods = ImGuiKey(shortcut["Mods"].As<int>(0));
 			Shortcuts::SetShortcut(name, key, mods);
 		}
 	}
@@ -172,15 +172,11 @@ namespace Glory::Editor
 				continue;
 			}
 
-			if (!ImGui::IsKeyPressed(itor->second.m_Key, false))
-			{
+			if (itor->second.m_Key == ImGuiKey_None || !ImGui::IsKeyPressed(itor->second.m_Key, false))
 				continue;
-			}
 			/* Mods need to be the exact same to prevent triggering multiple shortcuts. */
 			if (io.KeyMods != itor->second.m_Mods)
-			{
 				continue;
-			}
 
 			if (itor->second.m_MainWindowActions.size() > currentMainWindowIndex)
 			{
@@ -191,6 +187,7 @@ namespace Glory::Editor
 					return;
 				}
 			}
+
 			if (itor->second.m_Action) itor->second.m_Action();
 			m_TriggeredThisFame.emplace_back(itor->second.m_Name);
 		}

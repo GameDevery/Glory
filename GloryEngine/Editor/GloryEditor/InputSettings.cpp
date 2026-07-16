@@ -142,7 +142,7 @@ namespace Glory::Editor
 	{
 		/* Back button */
 		const float availableWidth = ImGui::GetContentRegionAvail().x;
-		if (ImGui::Selectable(ICON_FA_ARROW_LEFT, false, ImGuiSelectableFlags_AllowItemOverlap | ImGuiSelectableFlags_DontClosePopups))
+		if (ImGui::Selectable(ICON_FA_ARROW_LEFT, false, ImGuiSelectableFlags_AllowOverlap | ImGuiSelectableFlags_DontClosePopups))
 		{
 			CurrentDeviceType = InputDeviceType(-1);
 			KeysNeedFilter = true;
@@ -226,7 +226,7 @@ namespace Glory::Editor
 					deviceTypeEnum.ToString(deviceType, deviceTypeString);
 					const float availableWidth = ImGui::GetContentRegionAvail().x;
 					const ImVec2 cursorPos = ImGui::GetCursorPos();
-					if (ImGui::Selectable(DeviceIcons[i], false, ImGuiSelectableFlags_AllowItemOverlap | ImGuiSelectableFlags_DontClosePopups))
+					if (ImGui::Selectable(DeviceIcons[i], false, ImGuiSelectableFlags_AllowOverlap | ImGuiSelectableFlags_DontClosePopups))
 					{
 						CurrentDeviceType = deviceType;
 						KeysNeedFilter = true;
@@ -257,7 +257,7 @@ namespace Glory::Editor
 						Enum<InputDeviceType>().ToString(bindingData.DeviceType, bindingString);
 						std::filesystem::path bindingPath{ bindingString };
 						bindingPath = bindingPath.append(bindingData.IsAxis ? "Axis" : "Key").append(bindingData.Label);
-						if (ImGui::Selectable(bindingData.IsAxis ? ICON_FA_ARROW_RIGHT_ARROW_LEFT : ICON_FA_CIRCLE_DOWN, bindingPath.string() == value, ImGuiSelectableFlags_AllowItemOverlap))
+						if (ImGui::Selectable(bindingData.IsAxis ? ICON_FA_ARROW_RIGHT_ARROW_LEFT : ICON_FA_CIRCLE_DOWN, bindingPath.string() == value, ImGuiSelectableFlags_AllowOverlap))
 						{
 							value = bindingPath.string();
 							keyChosen = true;

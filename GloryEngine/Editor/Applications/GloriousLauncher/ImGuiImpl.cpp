@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "ImGuiImpl.h"
-#include "imgui_impl_sdl.h"
+#include "imgui_impl_sdl2.h"
 #include "imgui_impl_opengl3.h"
 
 namespace Glory::EditorLauncher
@@ -72,11 +72,9 @@ namespace Glory::EditorLauncher
 
     void ImGuiImpl::NewFrame()
     {
-        SDL_Window* pSDLWindow = m_pHubWindow->GetSDLWindow();
-
         // Start the Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplSDL2_NewFrame(pSDLWindow);
+        ImGui_ImplSDL2_NewFrame();
         ImGui::NewFrame();
     }
 

@@ -75,6 +75,7 @@ namespace Glory::Editor
 						Undo::StartRecord("Add Property");
 						Undo::YAMLEdit(file, prop.Path(), YAML::Node(YAML::NodeType::Null), newNode);
 						Undo::StopRecord();
+						ForceFilter = true;
 					}
 				}
 
@@ -128,7 +129,7 @@ namespace Glory::Editor
 
 			ImGui::PushID(key.data());
 			ImGui::BeginChild(key.data(), ImVec2{ 0.0f, inPlayMode && debuggingState && debuggingFSM ? 96.0f : 68.0f },
-				true, ImGuiWindowFlags_AlwaysAutoResize);
+				ImGuiChildFlags_Borders | ImGuiChildFlags_AlwaysAutoResize | ImGuiChildFlags_AutoResizeY);
 			change |= EditorUI::InputText(file, name.Path());
 
 			Undo::StartRecord("Change Property");

@@ -43,7 +43,7 @@ namespace Glory::Editor
 				for (const auto& location : m_RemovedAssets)
 				{
 					ImGui::PushID(index);
-					ImGui::Selectable("##selectable", false, ImGuiSelectableFlags_AllowItemOverlap | ImGuiSelectableFlags_DontClosePopups);
+					ImGui::Selectable("##selectable", false, ImGuiSelectableFlags_AllowOverlap | ImGuiSelectableFlags_DontClosePopups);
 					ImGui::SameLine();
 					ImGui::Text("%s \\\\ %s", location.Path.data(), location.SubresourcePath.data());
 					ImGui::PopID();

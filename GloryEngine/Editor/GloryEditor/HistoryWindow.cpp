@@ -31,7 +31,7 @@ namespace Glory::Editor
 		const ImVec2 maxRegion = ImGui::GetContentRegionAvail();
 		const ImVec4 selectedColor = ImGui::GetStyleColorVec4(ImGuiCol_HeaderActive);
 
-		ImGui::BeginChild("##HistoryRegion", maxRegion, false);
+		ImGui::BeginChild("##HistoryRegion", maxRegion, 0);
 		const ImVec2 historySize = ImGui::GetContentRegionAvail();
 		ImGui::BeginListBox("##History", historySize);
 
@@ -42,7 +42,8 @@ namespace Glory::Editor
 
 		const float itemHeight = 24.0f;
 
-		ImGuiListClipper clipper((int)recordCount, itemHeight);
+		ImGuiListClipper clipper;
+		clipper.Begin((int)recordCount, itemHeight);
 
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0.0f, 0.0f });
 

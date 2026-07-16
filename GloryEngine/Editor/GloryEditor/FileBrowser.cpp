@@ -291,19 +291,18 @@ namespace Glory::Editor
 
     void FileBrowser::DirectoryBrowser()
     {
-        ImGuiWindowFlags window_flags = ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_AlwaysAutoResize;
-        ImGui::BeginChild("DirectoryBrowser", ImVec2(0, 0), false, window_flags);
+        ImGui::BeginChild("DirectoryBrowser", ImVec2(0, 0), ImGuiChildFlags_AlwaysAutoResize |
+            ImGuiChildFlags_AutoResizeX | ImGuiChildFlags_AutoResizeY, ImGuiWindowFlags_HorizontalScrollbar);
+
         for (size_t i = 0; i < m_pRootItems.size(); i++)
-        {
             m_pRootItems[i]->DrawDirectoryBrowser();
-        }
+
         ImGui::EndChild();
     }
 
     void FileBrowser::FileBrowserMenu()
     {
-        ImGuiWindowFlags window_flags = ImGuiWindowFlags_HorizontalScrollbar;
-        ImGui::BeginChild("DirectoryBrowser", ImVec2(0, 0), false, window_flags);
+        ImGui::BeginChild("DirectoryBrowser", ImVec2(0, 0), 0, ImGuiWindowFlags_HorizontalScrollbar);
         DrawPathControls();
         ImGui::SameLine();
         FileBrowserItem::DrawCurrentPath();
@@ -378,8 +377,7 @@ namespace Glory::Editor
 
     void FileBrowser::DrawFileBrowser()
     {
-        ImGuiWindowFlags window_flags = ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_AlwaysAutoResize;
-        ImGui::BeginChild("FileBrowser", ImVec2(0, 0), true, window_flags);
+        ImGui::BeginChild("FileBrowser", ImVec2(0, 0), ImGuiChildFlags_Borders);
         /* TODO: This will need to become a custom DND target with internal ImGui::BeginDragDropTargetCustom */
         DND{ { ResourceTypes::GetHash<EditableEntity>() } }.HandleDragAndDropWindowTarget([&](uint32_t hash, const ImGuiPayload* payload) {
             const ObjectPayload objectPayload = *(const ObjectPayload*)payload->Data;
@@ -449,7 +447,7 @@ namespace Glory::Editor
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f, 0.0f });
         ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-        ImGui::BeginChild("##file", itemSize, false, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+        ImGui::BeginChild("##file", itemSize, 0, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
         ImGui::PopStyleVar(2);
 
         const ImVec2 cursorPos = ImGui::GetCursorPos();
@@ -461,7 +459,7 @@ namespace Glory::Editor
         ImGui::Button("##fileItem", itemSize);
 
         ImGui::PopStyleColor();
-        ImGui::SetItemAllowOverlap();
+        ImGui::SetNextItemAllowOverlap();
         ImGui::SetCursorPos({ cursorPos.x + padding, cursorPos.y + padding });
         ImGui::Image(texture ? pRenderImpl->GetTextureID(texture) : NULL, ImVec2((float)m_IconSize, (float)m_IconSize));
         DrawCreatingItemName(padding);

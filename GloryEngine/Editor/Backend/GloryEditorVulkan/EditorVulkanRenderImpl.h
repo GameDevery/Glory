@@ -39,7 +39,6 @@ namespace Glory::Editor
 
         void SetupVulkanWindow(VkInstance instance, ImGui_ImplVulkanH_Window* wd, VkSurfaceKHR surface, int width, int height);
         void CreateDescriptorPool(VkDevice device);
-        void UploadFonts(ImGui_ImplVulkanH_Window* wd);
         void FrameRender(ImGui_ImplVulkanH_Window* wd, ImDrawData* draw_data);
         void FramePresent(ImGui_ImplVulkanH_Window* wd);
         void CleanupVulkanWindow();

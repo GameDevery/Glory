@@ -170,7 +170,7 @@ namespace Glory::Editor
 		const bool differentBase = baseNode.Path() != node.Path();
 
 		bool changed = false;
-		const ImGuiSelectableFlags selectableFlags = ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowItemOverlap;
+		const ImGuiSelectableFlags selectableFlags = ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap;
 		std::vector<std::string> stringKeys;
 
 		for (auto it = baseNode.Begin(); it != baseNode.End(); ++it)
@@ -190,12 +190,12 @@ namespace Glory::Editor
 			bool treeOpen = false;
 
 			ImGui::TableNextColumn();
-			const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_AllowItemOverlap |
+			const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_AllowOverlap |
 				ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_DefaultOpen;
 
 			ImGui::TreePush(key.data());
 			const ImGuiID id = ImGui::GetID(key.data());
-			treeOpen = ImGui::TreeNodeBehaviorIsOpen(id, treeNodeFlags);
+			treeOpen = ImGui::TreeNodeUpdateNextOpen(id, treeNodeFlags);
 
 			if (ImGui::Selectable("##selectable", false, selectableFlags, ImVec2(0, rowHeight)))
 				ImGui::TreeNodeSetOpen(id, !treeOpen);
@@ -313,7 +313,7 @@ namespace Glory::Editor
 	{
 		bool changed = false;
 
-		const ImGuiSelectableFlags selectableFlags = ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowItemOverlap;
+		const ImGuiSelectableFlags selectableFlags = ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap;
 
 		if (CreatingNewItem && CreatingKeyPath == node.Path())
 		{
@@ -489,12 +489,12 @@ namespace Glory::Editor
 		bool treeOpen = false;
 		if (ImGui::TableNextColumn())
 		{
-			const ImGuiSelectableFlags selectableFlags = ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowItemOverlap;
-			const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_DefaultOpen;
+			const ImGuiSelectableFlags selectableFlags = ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap;
+			const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_AllowOverlap | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_DefaultOpen;
 
 			ImGui::TreePush("root");
 			const ImGuiID id = ImGui::GetID("root");
-			treeOpen = ImGui::TreeNodeBehaviorIsOpen(id, treeNodeFlags);
+			treeOpen = ImGui::TreeNodeUpdateNextOpen(id, treeNodeFlags);
 
 			if (ImGui::Selectable("##selectable", false, selectableFlags, ImVec2(0, rowHeight)))
 				ImGui::TreeNodeSetOpen(id, !treeOpen);

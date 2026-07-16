@@ -174,7 +174,7 @@ namespace Glory::Editor
                 ImGui::TableNextRow(ImGuiTableRowFlags_None, 0.0f);
 
                 ImGui::TableSetColumnIndex(0);
-                ImGuiSelectableFlags selectable_flags = ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowItemOverlap;
+                ImGuiSelectableFlags selectable_flags = ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap;
 
                 std::string projectNameString(item->Name);
                 projectNameString += '\n';
@@ -319,7 +319,7 @@ namespace Glory::Editor
                 ImGui::TableNextRow(ImGuiTableRowFlags_None, 0.0f);
 
                 ImGui::TableSetColumnIndex(0);
-                ImGuiSelectableFlags selectable_flags = ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowItemOverlap;
+                ImGuiSelectableFlags selectable_flags = ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap;
 
                 std::filesystem::path path = entry.path();
                 std::string pathString = path.string();

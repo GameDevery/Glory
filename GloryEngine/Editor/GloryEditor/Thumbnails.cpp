@@ -74,7 +74,7 @@ namespace Glory::Editor
 		const ThumbnailData thumb = GetThumbnail(uuid);
 		EditorRenderImpl* pRenderImpl = m_pApp->GetEditorPlatform().GetRenderImpl();
 		if (thumb.Texture)
-			return ImGui::ImageButton(pRenderImpl->GetTextureID(thumb.Texture), ImVec2(size, size));
+			return ImGui::ImageButton("", pRenderImpl->GetTextureID(thumb.Texture), ImVec2(size, size));
 		else if (!thumb.Icon.empty())
 		{
 			ImGui::PushFont(EditorPlatform::HugeFont);

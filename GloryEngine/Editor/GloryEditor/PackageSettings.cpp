@@ -147,7 +147,7 @@ namespace Glory::Editor
 			const auto itor = std::find(Scenes.begin(), Scenes.end(), entrySceneID);
 			if (entrySceneID == 0)
 			{
-				ImGui::BeginChild("error", { 0.0f, childHeight }, true, ImGuiWindowFlags_MenuBar);
+				ImGui::BeginChild("error", { 0.0f, childHeight }, ImGuiChildFlags_Borders, ImGuiWindowFlags_MenuBar);
 				if (ImGui::BeginMenuBar())
 				{
 					ImGui::TextColored({ 1.0f, 0.0f, 0.0f, 1.0f }, ICON_FA_CIRCLE_EXCLAMATION);
@@ -160,7 +160,7 @@ namespace Glory::Editor
 			}
 			else if (itor == Scenes.end())
 			{
-				ImGui::BeginChild("error", { 0.0f, childHeight }, true, ImGuiWindowFlags_MenuBar);
+				ImGui::BeginChild("error", { 0.0f, childHeight }, ImGuiChildFlags_Borders, ImGuiWindowFlags_MenuBar);
 				if (ImGui::BeginMenuBar())
 				{
 					ImGui::TextColored({ 1.0f, 0.0f, 0.0f, 1.0f }, ICON_FA_CIRCLE_EXCLAMATION);
